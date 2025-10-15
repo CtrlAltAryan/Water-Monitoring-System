@@ -1,8 +1,5 @@
----
----
-
 @import "jekyll-theme-minimal";
-@import url("https://fonts.googleapis.com/css?family=Muli&display=swap'");
+@import url("https://fonts.googleapis.com/css?family=Muli&display=swap");
 @import url("https://fonts.googleapis.com/css?family=Lato:700|Muli&display=swap");
 
 body{
@@ -12,4 +9,54 @@ body{
 h1 {
   font-family: 'Lato', sans-serif;
   font-weight: bold;
+}
+
+/* Footer styles */
+.site-footer{
+  background: #f8f8f6; /* off-white background */
+  color: #222; /* dark text for contrast */
+  padding: 30px 0;
+  margin-top: 40px;
+  font-size: 14px;
+}
+.site-footer a{
+  color: #333;
+  text-decoration: none;
+}
+.site-footer a:hover{
+  color: #000;
+  text-decoration: underline;
+}
+.site-footer .footer-about h4{
+  margin-top: 0;
+  color: #fff;
+}
+.site-footer .footer-links ul{
+  list-style: none;
+  padding: 0 0 0 3px; /* small left offset to pull links slightly left */
+}
+.site-footer .footer-links li{
+  margin: 6px 0;
+}
+.site-footer .social-icons{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.site-footer .social-link svg{
+  fill: #444; /* darker icons on light bg */
+}
+.site-footer .social-link:hover svg{
+  fill: #000;
+}
+.site-footer hr{
+  border-color: rgba(0,0,0,0.06);
+}
+.site-footer .copyright{
+  margin: 10px 0 0;
+  color: #666;
+}
+
+@media (max-width: 576px){
+  .site-footer .social-icons{ justify-content: flex-start; }
 }
