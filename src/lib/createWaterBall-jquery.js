@@ -112,6 +112,10 @@
                     isLoading:false,
                     nowRange:0,
                     targetRange:0,
+                    // alarm settings
+                    alarmEnabled: true,
+                    alarmThreshold: 95,
+                    alarmSnoozed: false,
                     lineWidth:2,
                     data_range:[60,80,100],
                     textColorRange:['#fe5022','#fff','#fff'],
@@ -149,6 +153,16 @@
             }
          });
             
+        },
+        // silence alarm (public)
+        silenceAlarm: function () {
+            return this.each(function(){
+                var $this = $(this), data = $this.data('waterBall');
+                if (!data) return;
+                data.config.alarmSnoozed = true;
+                // trigger an event so outside UI can stop sound
+                $this.trigger('waterAlarmClear');
+            });
         },
         destroy: function () {
         },
@@ -194,11 +208,31 @@
             ctx.drawImage(cvs1, 0, 0);
             ctx.drawImage(cvs2, 0, 0);
             ctx.drawImage(cvs3, 0, 0);
-            delete cvs1;
-            delete cvs2;
-            delete cvs3;
+            // release references (avoid using delete on identifiers)
+            cvs1 = null;
+            cvs2 = null;
+            cvs3 = null;
 
             config.wave_config.xOffset += config.wave_config.speed;
+            // Alarm detection: if enabled and not snoozed, notify when approaching threshold
+            try {
+                if (config.alarmEnabled && !config.alarmSnoozed) {
+                    // approaching if nowRange >= alarmThreshold - 2 or targetRange >= alarmThreshold - 2
+                    var approaching = config.nowRange >= (config.alarmThreshold - 2) || config.targetRange >= (config.alarmThreshold - 2);
+                    if (approaching && !this.data('waterBall')._alarmFired) {
+                        this.data('waterBall')._alarmFired = true;
+                        this.trigger('waterAlarm', [config.nowRange, config.alarmThreshold]);
+                    }
+                    // clear alarm if drops or becomes steady below threshold
+                    if (!approaching && this.data('waterBall')._alarmFired) {
+                        this.data('waterBall')._alarmFired = false;
+                        this.trigger('waterAlarmClear', [config.nowRange]);
+                    }
+                }
+            } catch (e) {
+                // swallow any errors to avoid breaking animation loop
+                console.error(e);
+            }
             requestAnimationFrame(methods.render.bind(this));
         }
     };
